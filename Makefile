@@ -165,3 +165,12 @@ lint-imports:
 sort-imports:
 	@goimports-reviser -company-prefixes "github.com/celestiaorg"  -project-name "github.com/celestiaorg/celestia-node" -output stdout ./...
 .PHONY: sort-imports
+
+mod-replace-check:
+	@if !(grep "github.com/cosmos/cosmos-sdk =>" go.mod); \
+	then \
+		echo "missing cosmos-sdk replace"; \
+	fi;
+.PHONY: mod-replace-check
+
+

@@ -13,8 +13,9 @@ import (
 
 	dsbadger "github.com/celestiaorg/go-ds-badger4"
 
-	"github.com/celestiaorg/celestia-node/libs/fslock"
 	"github.com/celestiaorg/celestia-node/libs/keystore"
+
+	"github.com/danjacques/gofslock/fslock"
 )
 
 var (
@@ -58,7 +59,7 @@ func OpenStore(path string, ring keyring.Keyring) (Store, error) {
 
 	flock, err := fslock.Lock(lockPath(path))
 	if err != nil {
-		if err == fslock.ErrLocked {
+		if err == fslock.ErrLockHeld {
 			return nil, ErrOpened
 		}
 		return nil, err
@@ -146,7 +147,7 @@ type fsStore struct {
 	dataMu  sync.Mutex
 	data    datastore.Batching
 	keys    keystore.Keystore
-	dirLock *fslock.Locker // protects directory
+	dirLock fslock.Handle // protects directory
 }
 
 func storePath(path string) (string, error) {

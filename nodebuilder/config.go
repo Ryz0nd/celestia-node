@@ -7,7 +7,6 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/imdario/mergo"
 
-	"github.com/celestiaorg/celestia-node/libs/fslock"
 	"github.com/celestiaorg/celestia-node/nodebuilder/core"
 	"github.com/celestiaorg/celestia-node/nodebuilder/das"
 	"github.com/celestiaorg/celestia-node/nodebuilder/gateway"
@@ -17,6 +16,8 @@ import (
 	"github.com/celestiaorg/celestia-node/nodebuilder/rpc"
 	"github.com/celestiaorg/celestia-node/nodebuilder/share"
 	"github.com/celestiaorg/celestia-node/nodebuilder/state"
+
+	"github.com/danjacques/gofslock/fslock"
 )
 
 // ConfigLoader defines a function that loads a config from any source.
@@ -67,7 +68,7 @@ func SaveConfig(path string, cfg *Config) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer f.Close() //nolint: errcheck
 
 	return cfg.Encode(f)
 }
@@ -93,7 +94,7 @@ func RemoveConfig(path string) (err error) {
 
 	flock, err := fslock.Lock(lockPath(path))
 	if err != nil {
-		if err == fslock.ErrLocked {
+		if err == fslock.ErrLockHeld {
 			err = ErrOpened
 		}
 		return
@@ -119,7 +120,7 @@ func UpdateConfig(tp node.Type, path string) (err error) {
 
 	flock, err := fslock.Lock(lockPath(path))
 	if err != nil {
-		if err == fslock.ErrLocked {
+		if err == fslock.ErrLockHeld {
 			err = ErrOpened
 		}
 		return err

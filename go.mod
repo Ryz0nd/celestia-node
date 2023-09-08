@@ -2,8 +2,6 @@ module github.com/celestiaorg/celestia-node
 
 go 1.21
 
-toolchain go1.21.0
-
 require (
 	cosmossdk.io/errors v1.0.0
 	cosmossdk.io/math v1.1.2

@@ -7,13 +7,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/danjacques/gofslock/fslock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/celestiaorg/celestia-app/app"
 	"github.com/celestiaorg/celestia-app/app/encoding"
 
-	"github.com/celestiaorg/celestia-node/libs/fslock"
 	"github.com/celestiaorg/celestia-node/nodebuilder/node"
 )
 
@@ -21,9 +21,9 @@ func TestInit(t *testing.T) {
 	dir := t.TempDir()
 	nodes := []node.Type{node.Light, node.Bridge}
 
-	for _, node := range nodes {
-		cfg := DefaultConfig(node)
-		require.NoError(t, Init(*cfg, dir, node))
+	for _, currentNode := range nodes {
+		cfg := DefaultConfig(currentNode)
+		require.NoError(t, Init(*cfg, dir, currentNode))
 		assert.True(t, IsInit(dir))
 	}
 }
@@ -32,9 +32,9 @@ func TestInitErrForInvalidPath(t *testing.T) {
 	path := "/invalid_path"
 	nodes := []node.Type{node.Light, node.Bridge}
 
-	for _, node := range nodes {
-		cfg := DefaultConfig(node)
-		require.Error(t, Init(*cfg, path, node))
+	for _, currentNode := range nodes {
+		cfg := DefaultConfig(currentNode)
+		require.Error(t, Init(*cfg, path, currentNode))
 	}
 }
 
@@ -63,9 +63,9 @@ func TestInitErrForLockedDir(t *testing.T) {
 	defer flock.Unlock() //nolint:errcheck
 	nodes := []node.Type{node.Light, node.Bridge}
 
-	for _, node := range nodes {
-		cfg := DefaultConfig(node)
-		require.Error(t, Init(*cfg, dir, node))
+	for _, currentNode := range nodes {
+		cfg := DefaultConfig(currentNode)
+		require.Error(t, Init(*cfg, dir, currentNode))
 	}
 }
 

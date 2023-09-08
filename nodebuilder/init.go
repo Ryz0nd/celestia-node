@@ -12,10 +12,11 @@ import (
 	"github.com/celestiaorg/celestia-app/app"
 	"github.com/celestiaorg/celestia-app/app/encoding"
 
-	"github.com/celestiaorg/celestia-node/libs/fslock"
 	"github.com/celestiaorg/celestia-node/libs/utils"
 	"github.com/celestiaorg/celestia-node/nodebuilder/node"
 	"github.com/celestiaorg/celestia-node/nodebuilder/state"
+
+	"github.com/danjacques/gofslock/fslock"
 )
 
 // PrintKeyringInfo whether to print keyring information during init.
@@ -37,7 +38,7 @@ func Init(cfg Config, path string, tp node.Type) error {
 
 	flock, err := fslock.Lock(lockPath(path))
 	if err != nil {
-		if err == fslock.ErrLocked {
+		if err == fslock.ErrLockHeld {
 			return ErrOpened
 		}
 		return err
@@ -84,7 +85,7 @@ func Reset(path string, tp node.Type) error {
 
 	flock, err := fslock.Lock(lockPath(path))
 	if err != nil {
-		if err == fslock.ErrLocked {
+		if err == fslock.ErrLockHeld {
 			return ErrOpened
 		}
 		return err

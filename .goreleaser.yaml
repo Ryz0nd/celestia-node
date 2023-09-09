@@ -15,6 +15,9 @@ builds:
       - linux
       - windows
       - darwin
+    ignore:
+      - goos: windows
+        goarch: arm64
     ldflags:
       # Ref: https://goreleaser.com/customization/templates/#common-fields
       #
